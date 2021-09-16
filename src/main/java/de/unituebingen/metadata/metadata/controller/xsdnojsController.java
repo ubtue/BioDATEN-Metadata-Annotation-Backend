@@ -1,18 +1,26 @@
 package de.unituebingen.metadata.metadata.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -29,6 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 @RequestMapping("xsdnojs")
 @RestController
@@ -47,24 +60,7 @@ public class xsdnojsController {
     @GetMapping(value = "/{schema}")
     public String xsdnojs(@PathVariable("schema") String schema) throws IOException, TransformerException {
 
-        File file;
-
-        switch (schema) {
-
-            case "biodatenMinimal":
-                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/minimal/BiodatenMinimal.xsd");
-                break;
-
-            case "premis":
-                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/premis/premis.xsd");
-                break;
-
-            case "datacite":
-            default:
-                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/datacite/datacite.xsd");
-                break;
-        }
-
+        File file = this.getFileBySchemeName(schema);
         
         return this.parseFile(file, schema, null, false);
 
@@ -118,6 +114,7 @@ public class xsdnojsController {
             }
 
             return this.parseFile(newFile, file.getOriginalFilename(), null, true);
+
         } catch (TransformerException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -126,8 +123,17 @@ public class xsdnojsController {
         }
         
         // return "error";
+    }
 
-        
+    @PostMapping(value = "/xml-input")
+    public String generateFormsFromXML(@RequestParam("fileXML") MultipartFile fileXML) {
+
+        // Create a JSON object to return
+        JSONObject jsonObject = new JSONObject();
+
+        this.parseXMLFile(fileXML, jsonObject);
+
+        return jsonObject.toString();
     }
 
     
@@ -210,7 +216,7 @@ public class xsdnojsController {
         StringBuffer sb = outWriter.getBuffer();
         String finalstring = sb.toString();
 
-        // return the name of the scheme and the parsed content
+        // Return the name of the scheme and the parsed content
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("scheme", fileName);
@@ -227,6 +233,156 @@ public class xsdnojsController {
 
         return jsonObject.toString();
         
+    }
+
+
+    /**
+     * parseXMLContent
+     * 
+     * Parses the XML content and returns the XSLT processor result
+     * 
+     * @param templateFile
+     * @param fileName
+     * @param xmlContent
+     * @return
+     */
+    private JSONObject parseXMLContent(File templateFile, String fileName, String xmlContent) {
+    
+        JSONObject formResult = new JSONObject();
+
+        StringWriter outWriter = new StringWriter();
+        StreamResult result = new StreamResult(outWriter);
+
+        // XSLT processor
+        Source xslt = new StreamSource(new File("/usr/local/projects/xsd2html2xml-nojs/xsd2html2xml.xsl"));
+
+        Source xml;
+
+        xmlContent = "<?xml version=\"1.0\"?>" + xmlContent;
+
+        // Takes the content of the first node after the <xml ...> and filters the content between the tags
+        final Pattern nodePattern = Pattern.compile("(<\\?xml.*\\?>)(<([a-zA-Z].+?)>)", Pattern.DOTALL);
+        final Matcher nodeMatcher = nodePattern.matcher(xmlContent);
+
+        if ( nodeMatcher.find() ) {
+
+            String xmlns = " xmlns=\"http://www.w3.org/1999/xhtml\"";
+            String addContent = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"" + templateFile.getAbsolutePath() + "\"";
+
+            String searchedContent = nodeMatcher.group(3);
+
+            // Check if the xmlns attribute is missing and add it if necessary
+            final Pattern xmlnsPattern = Pattern.compile("xmlns\\=\\\"");
+            final Matcher xmlnsMatcher = xmlnsPattern.matcher(searchedContent);
+
+            if ( !xmlnsMatcher.find() ) {
+                addContent = xmlns + addContent;
+            }
+
+            // Merge the content of the filtered and the created content above
+            xmlContent = xmlContent.replaceFirst(searchedContent, searchedContent + addContent);
+        } else {
+            
+        }
+      
+        xml = new StreamSource(new StringReader(xmlContent));
+                           
+        // Use Saxon Transformer 
+        TransformerFactory factory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+        
+        Transformer transformer;
+
+        try {
+            transformer = factory.newTransformer(xslt);
+
+            transformer.transform(xml, result);
+
+            // Save the result in a string
+            StringBuffer sb = outWriter.getBuffer();
+            String finalstring = sb.toString();
+
+            formResult.put("scheme", fileName);
+            formResult.put("html", this.cleanHTML(finalstring, fileName));
+
+        } catch (TransformerConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return formResult;
+    }
+
+
+    /**
+     * parseXMLFile
+     * 
+     * Handles the parse of the XML file
+     * 
+     * @param fileXML
+     * @param json
+     * @return
+     */
+    private String parseXMLFile(MultipartFile fileXML, JSONObject json) {
+
+        String result = "";
+
+        // Save MultipartFile to File
+        File newFileXML = new File("/home/qubvh01/tmp/newFileXML_" + LocalDateTime.now().toString() + Math.random());
+
+        try {
+            
+            fileXML.transferTo(newFileXML);
+
+            // Parse the XML file and look for schemes (node newScheme)
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(newFileXML);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName("newScheme");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                
+                Node nNode = nList.item(temp);
+
+                // Get the scheme name
+                String schemeName = nNode.getAttributes().getNamedItem("scheme").getNodeValue();
+                JSONObject formContent = new JSONObject();
+
+                // Get the node content
+                StringBuffer buff = new StringBuffer();
+                getXMLString(nNode, false, buff, true, true);
+                String schemeContent = buff.toString();
+
+                File schemaFile = this.getFileBySchemeName(schemeName);
+
+                if ( schemaFile != null ) {
+                    
+                    formContent = this.parseXMLContent(schemaFile, schemeName, schemeContent);
+                }
+
+                json.put(schemeName, formContent);
+                
+            }
+            
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
 
@@ -268,6 +424,8 @@ public class xsdnojsController {
         htmlOutput = htmlOutput.replaceAll("(?i)<meta[^>]*>", " ").replaceAll("\\s+", " ").trim();
         htmlOutput = htmlOutput.replaceAll("(?i)<style[^>]*>", " ").replaceAll("\\s+", " ").trim();
         htmlOutput = htmlOutput.replaceAll("(?i)<script[^>]*>", " ").replaceAll("\\s+", " ").trim();
+        htmlOutput = htmlOutput.replaceAll("(?i)</style[^>]*>", " ").replaceAll("\\s+", " ").trim();
+        htmlOutput = htmlOutput.replaceAll("(?i)</script[^>]*>", " ").replaceAll("\\s+", " ").trim();
 
         // The string --|placeholder|-- is set in the XSLT processor to identify code thats needs to be replaced.
         // Replace the string --|placeholder|-- with the XSD filename
@@ -279,5 +437,152 @@ public class xsdnojsController {
             .replaceAll("onclick=\"", "onclick=\"window['xsd2html2xml']['" + FilenameUtils.removeExtension(templateFilename) + "'].");
 
         return htmlOutput;
+    }
+
+
+    /**
+     * getXMLString
+     * 
+     * Writes XML String to buffer
+     * 
+     * @param node
+     * @param withoutNamespaces
+     * @param buff
+     * @param endTag
+     * @param ignoreCurrent
+     */
+    public static void getXMLString(Node node, boolean withoutNamespaces, StringBuffer buff, boolean endTag, boolean ignoreCurrent) {
+
+        if ( !ignoreCurrent ) {
+            buff.append("<")
+                .append(namespace(node.getNodeName(), withoutNamespaces));
+        
+            if (node.hasAttributes()) {
+                buff.append(" ");
+        
+                NamedNodeMap attr = node.getAttributes();
+                int attrLenth = attr.getLength();
+                for (int i = 0; i < attrLenth; i++) {
+                    Node attrItem = attr.item(i);
+                    String name = namespace(attrItem.getNodeName(), withoutNamespaces);
+                    String value = attrItem.getNodeValue();
+        
+                    buff.append(name)
+                        .append("=")
+                        .append("\"")
+                        .append(value)
+                        .append("\"");
+        
+                    if (i < attrLenth - 1) {
+                        buff.append(" ");
+                    }
+                }
+            }
+        }
+    
+        if (node.hasChildNodes()) {
+
+            if ( !ignoreCurrent ) {
+                buff.append(">");
+            }
+    
+            NodeList children = node.getChildNodes();
+            int childrenCount = children.getLength();
+    
+            if (childrenCount == 1) {
+                Node item = children.item(0);
+                int itemType = item.getNodeType();
+                if (itemType == Node.TEXT_NODE) {
+                    if (item.getNodeValue() == null) {
+                        buff.append("/>");
+                    } else {
+                        buff.append(item.getNodeValue());
+                        buff.append("</")
+                            .append(namespace(node.getNodeName(), withoutNamespaces))
+                            .append(">");
+                    }
+    
+                    endTag = false;
+                }
+            }
+    
+            for (int i = 0; i < childrenCount; i++) {
+                Node item = children.item(i);
+                int itemType = item.getNodeType();
+                if (itemType == Node.DOCUMENT_NODE || itemType == Node.ELEMENT_NODE) {
+                    getXMLString(item, withoutNamespaces, buff, endTag, false);
+                }
+            }
+        } else if ( !ignoreCurrent ) {
+            if (node.getNodeValue() == null) {
+                buff.append("/>");
+            } else {
+                buff.append(node.getNodeValue());
+                buff.append("</")
+                    .append(namespace(node.getNodeName(), withoutNamespaces))
+                    .append(">");
+            }
+    
+            endTag = false;
+        }
+    
+        if (endTag && !ignoreCurrent ) {
+            buff.append("</")
+                .append(namespace(node.getNodeName(), withoutNamespaces))
+                .append(">");
+        }
+    }
+    
+
+    /**
+     * namespace
+     * 
+     * Gets the namespace of the Node
+     * 
+     * @param str
+     * @param withoutNamespace
+     * @return
+     */
+    private static String namespace(String str, boolean withoutNamespace) {
+        if (withoutNamespace && str.contains(":")) {
+            return str.substring(str.indexOf(":") + 1);
+        }
+    
+        return str;
+    }
+
+
+    /**
+     * getFileBySchemeName
+     * 
+     * Returns the scheme file for the scheme name
+     * 
+     * @param schemeName
+     * @return
+     */
+    private File getFileBySchemeName(String schemeName) {
+
+        File file;
+
+        switch (schemeName) {
+
+            case "biodatenMinimal":
+                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/schemes/BiodatenMinimal.xsd");
+                break;
+
+            case "premis":
+                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/schemes/premis.xsd");
+                break;
+
+            case "datacite":
+                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/schemes/datacite.xsd");
+                break;
+                
+            default:
+                file = new File("/usr/local/projects/xsd2html2xml-nojs/biodaten/schemes/" + schemeName + ".xsd");
+                break;
+        }
+
+        return file;
     }
 }
