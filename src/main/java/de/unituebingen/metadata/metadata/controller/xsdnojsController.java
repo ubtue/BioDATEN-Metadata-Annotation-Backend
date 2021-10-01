@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -129,11 +130,11 @@ public class xsdnojsController {
     public String generateFormsFromXML(@RequestParam("fileXML") MultipartFile fileXML) {
 
         // Create a JSON object to return
-        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
 
-        this.parseXMLFile(fileXML, jsonObject);
+        jsonArray = this.parseXMLFile(fileXML);
 
-        return jsonObject.toString();
+        return jsonArray.toString();
     }
 
     
@@ -322,12 +323,11 @@ public class xsdnojsController {
      * Handles the parse of the XML file
      * 
      * @param fileXML
-     * @param json
      * @return
      */
-    private String parseXMLFile(MultipartFile fileXML, JSONObject json) {
+    private JSONArray parseXMLFile(MultipartFile fileXML) {
 
-        String result = "";
+        JSONArray result = new JSONArray();
 
         // Save MultipartFile to File
         File newFileXML = new File("/home/qubvh01/tmp/newFileXML_" + LocalDateTime.now().toString() + Math.random());
@@ -350,6 +350,7 @@ public class xsdnojsController {
 
                 // Get the scheme name
                 String schemeName = nNode.getAttributes().getNamedItem("scheme").getNodeValue();
+
                 JSONObject formContent = new JSONObject();
 
                 // Get the node content
@@ -359,12 +360,12 @@ public class xsdnojsController {
 
                 File schemaFile = this.getFileBySchemeName(schemeName);
 
+                // If there is a corresponding file, parse the content via the XSLT processor
                 if ( schemaFile != null ) {
-                    
                     formContent = this.parseXMLContent(schemaFile, schemeName, schemeContent);
                 }
 
-                json.put(schemeName, formContent);
+                result.put(formContent);
                 
             }
             
@@ -383,6 +384,7 @@ public class xsdnojsController {
         }
 
         return result;
+
     }
 
 
