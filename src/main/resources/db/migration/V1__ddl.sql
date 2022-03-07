@@ -1,5 +1,20 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+
+CREATE TYPE status AS ENUM ('created', 'progress', 'finished', 'pub');
+
+CREATE TABLE metadata
+(
+  mets_id UUID not null primary key,
+  user_id VARCHAR NOT NULL,
+  hpc_job_id BIGINT,
+  metadata_status status NOT NULL,
+  mets_xml TEXT NOT NULL,
+  created timestamp DEFAULT now() NOT NULL,
+  lastmodified timestamp DEFAULT now() NOT NULL
+); 
+
+
 CREATE TABLE autocomplete_mappings
 (
     id UUID,

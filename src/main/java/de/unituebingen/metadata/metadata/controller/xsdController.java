@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,11 +44,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import de.unituebingen.metadata.metadata.dao.MetadataDAO;
+import de.unituebingen.metadata.metadata.entities.Metadata;
 
 @RequestMapping("xsd")
 @RestController
 public class xsdController {
+
+    @Autowired
+    private MetadataDAO metadataDAO;
 
     private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
     private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
@@ -149,6 +158,18 @@ public class xsdController {
         JSONArray jsonArray = new JSONArray();
 
         jsonArray = this.parseXMLFileSystem();
+
+        return jsonArray.toString();
+    }
+
+
+    @GetMapping(value = "/xml/{id}")
+    public String generateFormsFromXMLStringDatabase(@PathVariable("id") String metsId) throws IOException, TransformerException {
+
+        // Create a JSON object to return
+        JSONArray jsonArray = new JSONArray();
+
+        jsonArray = this.parseXMLStringFromDatabase(metsId);
 
         return jsonArray.toString();
     }
@@ -425,6 +446,78 @@ public class xsdController {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(newFileXML);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName("newSchema");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                
+                Node nNode = nList.item(temp);
+
+                // Get the schema name
+                String schemaName = nNode.getAttributes().getNamedItem("schema").getNodeValue();
+
+                JSONObject formContent = new JSONObject();
+
+                // Get the node content
+                StringBuffer buff = new StringBuffer();
+                getXMLString(nNode, false, buff, true, true);
+                String schemaContent = buff.toString();
+
+                File schemaFile = this.getFileBySchemaName(schemaName);
+
+                // If there is a corresponding file, parse the content via the XSLT processor
+                if ( schemaFile != null ) {
+                    formContent = this.parseXMLContent(schemaFile, schemaName, schemaContent);
+                }
+
+                result.put(formContent);
+                
+            }
+            
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+
+    /**
+     * parseXMLFile
+     * 
+     * Handles the parse of the XML string from the database
+     * 
+     * @param fileXML
+     * @return
+     */
+    private JSONArray parseXMLStringFromDatabase(String metsId) {
+
+        JSONArray result = new JSONArray();
+
+        Optional<Metadata> metadata = metadataDAO.findByMetsId(UUID.fromString(metsId));
+
+        Metadata metadataContent = metadata.get();
+
+        String xmlContent = metadataContent.getMets_xml();
+
+        try {
+            
+            // Parse the XML file and look for schemas (node newSchema)
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new InputSource(new StringReader(xmlContent)));
             doc.getDocumentElement().normalize();
 
             NodeList nList = doc.getElementsByTagName("newSchema");
