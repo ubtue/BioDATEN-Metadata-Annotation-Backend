@@ -58,7 +58,9 @@ public class xsdController {
     private MetadataDAO metadataDAO;
 
     private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
+    // private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
     private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
+    // private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
     private final static String TMPPATH = "/home/qubvh01/tmp/";
 
     /**

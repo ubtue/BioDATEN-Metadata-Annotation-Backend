@@ -18,7 +18,7 @@ CREATE TABLE metadata
 CREATE TABLE autocomplete_mappings
 (
     id UUID,
-    schema INT,
+    schema VARCHAR(3000),
     xpath VARCHAR(3000),
     ontology VARCHAR(3000),
     PRIMARY KEY (id)
@@ -49,8 +49,7 @@ CREATE TABLE autocomplete_schemas
 INSERT INTO autocomplete_schemas
 (
     id,
-    schema,
-    ontology
+    schema
 )
 VALUES(
     uuid_generate_v1(),
