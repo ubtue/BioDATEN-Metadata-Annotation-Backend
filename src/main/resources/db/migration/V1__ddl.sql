@@ -17,41 +17,30 @@ CREATE TABLE metadata
 
 CREATE TABLE autocomplete_mappings
 (
-    id UUID,
+    id UUID primary key,
     schema VARCHAR(3000),
     xpath VARCHAR(3000),
     ontology VARCHAR(3000),
-    PRIMARY KEY (id)
-);
-
-INSERT INTO autocomplete_mappings
-(
-    id,
-    schema,
-    xpath,
-    ontology
-)
-VALUES(
-    uuid_generate_v1(),
-    0,
-    '/',
-    '*'
+    active BOOLEAN
 );
 
 
 CREATE TABLE autocomplete_schemas
 (
-    id UUID,
-    schema VARCHAR(3000)
-    PRIMARY KEY (id)
+    id UUID primary key,
+    schema VARCHAR(3000),
+    active BOOLEAN
 );
 
-INSERT INTO autocomplete_schemas
+
+CREATE TABLE render_options
 (
-    id,
-    schema
-)
-VALUES(
-    uuid_generate_v1(),
-    'datacite'
+    id UUID primary key,
+    xpath VARCHAR(3000),
+    label TEXT,
+    placeholder TEXT,
+    prefilled TEXT,
+    readonly BOOLEAN,
+    hide BOOLEAN,
+    active BOOLEAN
 );

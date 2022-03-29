@@ -18,12 +18,12 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name="autocomplete_schemas")
+@Table(name="render_options")
 @Data
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @NoArgsConstructor
 
-public class AutocompleteSchema {
+public class RenderOption {
     @Id
     @GeneratedValue(generator = "UUID",
         strategy = GenerationType.AUTO)
@@ -33,7 +33,12 @@ public class AutocompleteSchema {
     )
     private UUID id;
 
-    private String schema;
+    private String xpath;
+    private String label;
+    private String placeholder;
+    private String prefilled;
+    private boolean readonly;
+    private boolean hide;
 
     private boolean active;
 

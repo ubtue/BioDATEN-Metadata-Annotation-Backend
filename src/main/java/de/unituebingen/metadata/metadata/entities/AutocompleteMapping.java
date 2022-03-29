@@ -37,6 +37,8 @@ public class AutocompleteMapping {
     private String xpath;
     private String ontology;
 
+    private boolean active;
+
     public UUID getId() {
         return id;
     }
