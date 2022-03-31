@@ -11,4 +11,5 @@ import org.springframework.data.repository.query.Param;
 public interface RenderOptionDAO extends JpaRepository<RenderOption, UUID> {
     
     List<RenderOption> findByXpath(@Param("xpath") String xpath); 
+    List<RenderOption> findBySchema(@Param("schema") String schema); 
 }

@@ -36,6 +36,7 @@ CREATE TABLE autocomplete_schemas
 CREATE TABLE render_options
 (
     id UUID primary key,
+    schema VARCHAR(3000),
     xpath VARCHAR(3000),
     label TEXT,
     placeholder TEXT,

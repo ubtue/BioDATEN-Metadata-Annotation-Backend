@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.unituebingen.metadata.metadata.dao.AutocompleteMappingDAO;
 import de.unituebingen.metadata.metadata.dao.AutocompleteSchemaDAO;
+import de.unituebingen.metadata.metadata.dao.RenderOptionDAO;
 import de.unituebingen.metadata.metadata.entities.AutocompleteMapping;
 import de.unituebingen.metadata.metadata.entities.AutocompleteSchema;
+import de.unituebingen.metadata.metadata.entities.RenderOption;
 
 @RequestMapping("autocomplete-schemas")
 @RestController
@@ -30,6 +32,9 @@ public class autocompleteSchemaController {
 
     @Autowired
     private AutocompleteMappingDAO autocompleteMappingDAO;
+
+    @Autowired
+    private RenderOptionDAO renderOptionDAO;
 
     @GetMapping
     public List<AutocompleteSchema> autocompleteSchema(){
@@ -51,6 +56,11 @@ public class autocompleteSchemaController {
     @GetMapping(value = "/mappings/{schema}")
     public List<AutocompleteMapping> getAutocompleteMappingsBySchemaId(@PathVariable("schema") String schema) {
         return autocompleteMappingDAO.findBySchema(schema);
+    }
+
+    @GetMapping(value = "/render-options/{schema}")
+    public List<RenderOption> getRenderOptionsBySchemaId(@PathVariable("schema") String schema) {
+        return renderOptionDAO.findBySchema(schema);
     }
 
     @PostMapping

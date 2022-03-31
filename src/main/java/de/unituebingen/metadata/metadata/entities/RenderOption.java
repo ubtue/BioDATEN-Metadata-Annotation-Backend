@@ -32,6 +32,7 @@ public class RenderOption {
         strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
+    private String schema;
 
     private String xpath;
     private String label;
