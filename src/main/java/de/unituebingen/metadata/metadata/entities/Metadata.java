@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.type.AnyType;
+import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.AllArgsConstructor;
@@ -51,6 +52,9 @@ public class Metadata {
     @Enumerated(EnumType.STRING)
     private Status metadata_status;
 
+    // Source for using XML as string: https://stackoverflow.com/questions/11578697/using-oracle-xmltype-column-in-hibernate
+    // @org.hibernate.annotations.Type(type="de.unituebingen.metadata.metadata.types.SQLXMLType")
+    @Column(name = "mets_xml", nullable = false, columnDefinition = "XMLType")
     private String mets_xml;
 
     private Date created;

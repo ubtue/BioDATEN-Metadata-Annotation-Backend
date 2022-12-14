@@ -79,7 +79,6 @@ public class xsdController {
         File file = this.getFileBySchemaName(schema);
         
         return this.parseFile(file, schema, null, false);
-
     }
     
 
@@ -272,7 +271,6 @@ public class xsdController {
         }
 
         return jsonObject.toString();
-        
     }
 
 
@@ -423,7 +421,6 @@ public class xsdController {
         }
 
         return result;
-
     }
 
 
@@ -492,7 +489,6 @@ public class xsdController {
         }
 
         return result;
-
     }
 
 
@@ -564,7 +560,6 @@ public class xsdController {
         }
 
         return result;
-
     }
 
 
