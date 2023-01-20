@@ -21,6 +21,7 @@ import de.unituebingen.metadata.metadata.dao.AutocompleteMappingDAO;
 import de.unituebingen.metadata.metadata.dao.MetadataDAO;
 import de.unituebingen.metadata.metadata.entities.AutocompleteMapping;
 import de.unituebingen.metadata.metadata.entities.Metadata;
+import de.unituebingen.metadata.metadata.entities.Metadata.Status;
 
 @RequestMapping("metadata")
 @RestController
@@ -41,6 +42,18 @@ public class metadataController {
 
         if ( metadata.isPresent() ) {
             return metadata.get();
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping(value = "/status/{id}")
+    public Status getMetadataStatusById(@PathVariable("id") UUID mets_id){
+
+        Optional<Metadata> metadata = metadataDAO.findById(mets_id);
+
+        if ( metadata.isPresent() ) {
+            return metadata.get().getStatus();
         } else {
             return null;
         }

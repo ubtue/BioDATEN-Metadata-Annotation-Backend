@@ -9,7 +9,7 @@ CREATE TABLE metadata
   user_id VARCHAR NOT NULL,
   hpc_job_id BIGINT,
   metadata_status status NOT NULL,
-  mets_xml TEXT NOT NULL,
+  mets_xml XML NOT NULL,
   created timestamp DEFAULT now() NOT NULL,
   lastmodified timestamp DEFAULT now() NOT NULL
 ); 

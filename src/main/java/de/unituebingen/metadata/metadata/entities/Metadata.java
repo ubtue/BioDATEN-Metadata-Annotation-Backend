@@ -63,4 +63,8 @@ public class Metadata {
     public UUID getId() {
         return metsId;
     }
+
+    public Status getStatus() {
+        return metadata_status;
+    }
 }
