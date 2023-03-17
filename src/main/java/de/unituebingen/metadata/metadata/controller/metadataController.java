@@ -92,6 +92,19 @@ public class metadataController {
         return metadata;
     }
 
+    @PutMapping(value = "status/{id}")
+    public Status updateMetadataStatus(@PathVariable("id") UUID mets_id, @RequestBody Status newStatus) {
+
+        Optional<Metadata> metadata = metadataDAO.findById(mets_id);
+
+        if ( metadata.isPresent() ) {
+            metadata.get().setMetadata_status(newStatus);
+            return metadata.get().getMetadata_status();
+        } else {
+            return null;
+        }
+    }
+
     @DeleteMapping(value = "/{id}")
     public void deleteMetadata(@PathVariable("id") UUID mets_id){
         

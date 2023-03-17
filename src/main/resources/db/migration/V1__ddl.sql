@@ -29,6 +29,8 @@ CREATE TABLE autocomplete_schemas
 (
     id UUID primary key,
     schema VARCHAR(3000),
+    file_name VARCHAR(3000),
+    tab_name VARCHAR(3000),
     active BOOLEAN
 );
 

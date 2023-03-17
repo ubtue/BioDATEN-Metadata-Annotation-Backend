@@ -11,6 +11,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -57,11 +62,11 @@ public class xsdController {
     @Autowired
     private MetadataDAO metadataDAO;
 
-    // private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
-    private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
+    private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
+    // private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
     private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
-    private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
-    // private final static String TMPPATH = "/home/qubvh01/tmp/";
+    // private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
+    private final static String TMPPATH = "/home/qubvh01/tmp/";
 
     /**
      * xsd
@@ -175,7 +180,18 @@ public class xsdController {
         return jsonArray.toString();
     }
 
-    
+    @GetMapping(value = "/xml-data")
+    public String generateFormsFromXMLStringDatabaseCustomSchemas(@RequestParam Map<String, String> allParams) {
+
+        // Create a JSON object to return
+        JSONArray jsonArray = new JSONArray();
+
+        jsonArray = this.parseXMLStringFromDatabase(allParams.get("metsId"), allParams.get("schemas"));
+
+        return jsonArray.toString();
+    }
+
+
     /**
      * parseFile
      * 
@@ -319,12 +335,13 @@ public class xsdController {
 
             // Merge the content of the filtered and the created content above
             xmlContent = xmlContent.replaceFirst(searchedContent, searchedContent + addContent);
+
+            xml = new StreamSource(new StringReader(xmlContent));
+
         } else {
-            
+            xml = new StreamSource(templateFile);
         }
-      
-        xml = new StreamSource(new StringReader(xmlContent));
-                           
+                                 
         // Use Saxon Transformer 
         TransformerFactory factory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
         
@@ -400,10 +417,8 @@ public class xsdController {
                 // If there is a corresponding file, parse the content via the XSLT processor
                 if ( schemaFile != null ) {
                     formContent = this.parseXMLContent(schemaFile, schemaName, schemaContent);
+                    result.put(formContent);
                 }
-
-                result.put(formContent);
-                
             }
             
         } catch (IllegalStateException e) {
@@ -468,10 +483,8 @@ public class xsdController {
                 // If there is a corresponding file, parse the content via the XSLT processor
                 if ( schemaFile != null ) {
                     formContent = this.parseXMLContent(schemaFile, schemaName, schemaContent);
+                    result.put(formContent);
                 }
-
-                result.put(formContent);
-                
             }
             
         } catch (IllegalStateException e) {
@@ -500,7 +513,7 @@ public class xsdController {
      * @param fileXML
      * @return
      */
-    private JSONArray parseXMLStringFromDatabase(String metsId) {
+    private JSONArray parseXMLStringFromDatabase(String metsId, String... schemas) {
 
         JSONArray result = new JSONArray();
 
@@ -520,12 +533,35 @@ public class xsdController {
 
             NodeList nList = doc.getElementsByTagName("newSchema");
 
+            String[] splittedSchemas;
+            List<String> schemasList;
+
+            // Check if there are custom schemas
+            if ( schemas.length > 0 ) {
+
+                // Split the query param and add it to a list so it can be used with contains() function
+                splittedSchemas = schemas[0].split(",");
+                schemasList = new ArrayList<>(Arrays.asList(splittedSchemas));
+            } else {
+                schemasList = Collections.emptyList();
+            }
+
+            // Keep the initial size because content from the list is removed later
+            int schemaListInitialSize = schemasList.size();
+
+            // Loop through all the found schemas
             for (int temp = 0; temp < nList.getLength(); temp++) {
                 
                 Node nNode = nList.item(temp);
 
                 // Get the schema name
                 String schemaName = nNode.getAttributes().getNamedItem("schema").getNodeValue();
+
+                // Check if there are custom schemas and check if the custom schema matches with the one found
+                // If not, skip the loop
+                if ( schemaListInitialSize > 0 && !schemasList.contains(schemaName) ) {
+                    continue;
+                }
 
                 JSONObject formContent = new JSONObject();
 
@@ -537,12 +573,39 @@ public class xsdController {
                 File schemaFile = this.getFileBySchemaName(schemaName);
 
                 // If there is a corresponding file, parse the content via the XSLT processor
-                if ( schemaFile != null ) {
+                if ( schemaFile.exists() && !schemaFile.isDirectory() ) {
                     formContent = this.parseXMLContent(schemaFile, schemaName, schemaContent);
-                }
+                    result.put(formContent);
 
-                result.put(formContent);
-                
+                    // If there are custom schemas, remove the handled from the list
+                    if ( schemasList.size() > 0 && schemasList.contains(schemaName) ) {
+                        schemasList.remove(schemaName);
+                    }
+                }                
+            }
+
+            // Check if there are unused custom schemas left
+            // This can happen if the xml string in the database does not include content or information about a schema
+            // If for example the user did not save any information for schema x, schema x will not get a newSchema node in the database
+            // Checking for unused schemas will ensure that these are rendered as well. If not, the processor will only render schemas
+            // that are already present in the xml database string with a newSchema node
+            if ( schemasList.size() > 0 ) {
+
+                for ( String currentSchema: schemasList ) {
+
+                    // Get the schema name
+                    String schemaName = currentSchema;
+
+                    JSONObject formContent = new JSONObject();
+
+                    File schemaFile = this.getFileBySchemaName(schemaName);
+
+                    // If there is a corresponding file, parse the content via the XSLT processor
+                    if ( schemaFile.exists() && !schemaFile.isDirectory() ) {
+                        formContent = this.parseXMLContent(schemaFile, schemaName, "");
+                        result.put(formContent);
+                    }         
+                }
             }
             
         } catch (IllegalStateException e) {

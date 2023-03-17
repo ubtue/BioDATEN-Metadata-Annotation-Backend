@@ -53,6 +53,18 @@ public class autocompleteSchemaController {
         }
     }
 
+    @GetMapping(value = "/schema/{fileName}")
+    public AutocompleteSchema getAutocompleteSchemaByFileName(@PathVariable("fileName") String fileName){
+
+        Optional<AutocompleteSchema> autocompleteSchema = autocompleteSchemaDAO.findByFileName(fileName);
+
+        if ( autocompleteSchema.isPresent() ) {
+            return autocompleteSchema.get();
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping(value = "/mappings/{schema}")
     public List<AutocompleteMapping> getAutocompleteMappingsBySchemaId(@PathVariable("schema") String schema) {
         return autocompleteMappingDAO.findBySchema(schema);
