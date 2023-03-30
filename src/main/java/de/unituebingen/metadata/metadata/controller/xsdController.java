@@ -1,15 +1,12 @@
 package de.unituebingen.metadata.metadata.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,11 +59,11 @@ public class xsdController {
     @Autowired
     private MetadataDAO metadataDAO;
 
-    private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
-    // private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
+    // private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
+    private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
     private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
-    // private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
-    private final static String TMPPATH = "/home/qubvh01/tmp/";
+    private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
+    // private final static String TMPPATH = "/home/qubvh01/tmp/";
 
     /**
      * xsd
@@ -143,6 +140,16 @@ public class xsdController {
         }
         
         // return "error";
+    }
+
+    @PostMapping(value= "/mets")
+    public String convertToMets(@RequestBody String xmlString) {
+
+        String metsResult = "";
+
+        metsResult = this.parseMetsString(xmlString);
+
+        return metsResult;
     }
 
     @PostMapping(value = "/xml-input")
@@ -368,6 +375,54 @@ public class xsdController {
         }
         
         return formResult;
+    }
+
+
+    /**
+     * parseMetsString
+     * 
+     * Parses the custom BioDATEN XML string to a METS XML string
+     * @param metsString
+     * @return
+     */
+    private String parseMetsString(String metsString) {
+
+        String parseResult = "";
+
+        // XSLT processor
+        Source xslt = new StreamSource(new File(XSLTSOURCE + "xml2mets.xsl"));
+
+        StringWriter outWriter = new StringWriter();
+        StreamResult result = new StreamResult(outWriter);
+
+        // TODO: Required?
+        // metsString = "<?xml version=\"1.0\"?>" + metsString;
+
+        Source xml = new StreamSource(new StringReader(metsString));
+
+        // Use Saxon Transformer 
+        TransformerFactory factory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+
+        Transformer transformer;
+
+        try {
+            transformer = factory.newTransformer(xslt);
+
+            transformer.transform(xml, result);
+
+            // Save the result in a string
+            StringBuffer sb = outWriter.getBuffer();
+            parseResult = sb.toString();
+            
+        } catch (TransformerConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return parseResult;
     }
 
 
