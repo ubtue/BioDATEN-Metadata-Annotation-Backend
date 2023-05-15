@@ -1,0 +1,433 @@
+{
+    "access": {
+      "embargo": {
+        "active": false,
+        "reason": null
+      },
+      "files": "public",
+      "record": "public",
+      "status": "open"
+    },
+    "created": "2023-02-23T14:45:52.986285+00:00",
+    "custom_fields": {
+      "ddi:AnalysisUnit": [
+        {
+          "id": "geographic unit",
+          "title": {
+            "en": "geographic unit"
+          }
+        },
+        {
+          "id": "object",
+          "title": {
+            "en": "object"
+          }
+        },
+        {
+          "id": "other",
+          "title": {
+            "en": "other"
+          }
+        }
+      ],
+      "ddi:DataSourceType": [
+        {
+          "id": "research data",
+          "title": {
+            "en": "research data"
+          }
+        }
+      ],
+      "ddi:DataType": [
+        {
+          "id": "float",
+          "title": {
+            "en": "float"
+          }
+        }
+      ],
+      "ddi:DateType": [
+        {
+          "id": "datetime",
+          "title": {
+            "en": "datetime"
+          }
+        },
+        {
+          "id": "date",
+          "title": {
+            "en": "date"
+          }
+        }
+      ],
+      "ddi:GeneralDataFormat": [
+        {
+          "id": "numeric",
+          "title": {
+            "en": "numeric"
+          }
+        }
+      ],
+      "ddi:ModeOfCollection": [
+        {
+          "id": "experiment",
+          "title": {
+            "en": "experiment"
+          }
+        }
+      ],
+      "ddi:NumericType": [
+        {
+          "id": "float",
+          "title": {
+            "en": "float"
+          }
+        }
+      ],
+      "ddi:TypeOfInstrument": [
+        {
+          "id": "technical instrument(s)",
+          "title": {
+            "en": "technical instrument(s)"
+          }
+        }
+      ],
+      "ddi:earth_sciences_terms": [
+        {
+          "id": "climate",
+          "title": {
+            "en": "climate"
+          }
+        },
+        {
+          "id": "aquatic",
+          "title": {
+            "en": "aquatic"
+          }
+        }
+      ],
+      "ddi:his_scie_tech_keyword": [
+        {
+          "id": "climate change",
+          "title": {
+            "en": "climate change"
+          }
+        }
+      ],
+      "own:FileFormat": [
+        {
+          "id": "xml",
+          "title": {
+            "en": "xml"
+          }
+        }
+      ],
+      "parthenos:geo_place_types": [
+        {
+          "id": "mountain",
+          "title": {
+            "en": "mountain"
+          }
+        }
+      ],
+      "quality:accuracy": "<p>...</p>",
+      "quality:completeness": "<p>...</p>",
+      "quality:conformity": "<p>...</p>",
+      "quality:consistency": "<p>...</p>",
+      "quality:credibility": "<p>...</p>",
+      "quality:processability": "<p>...</p>",
+      "quality:relevance": "<p>...</p>",
+      "quality:timeliness": "<p>...</p>",
+      "quality:understandability": "<p>...</p>"
+    },
+    "expires_at": "2023-02-23 14:45:52.986321",
+    "files": {
+      "enabled": true,
+      "order": []
+    },
+    "id": "6bjnr-e3n39",
+    "is_draft": true,
+    "is_published": false,
+    "links": {
+      "access_links": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/access/links",
+      "doi": "https://doi.org/10.57754/FDAT.6bjnr-e3n39",
+      "files": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft/files",
+      "publish": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft/actions/publish",
+      "record": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39",
+      "record_html": "https://fdat.uni-tuebingen.de/records/6bjnr-e3n39",
+      "reserve_doi": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft/pids/doi",
+      "review": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft/review",
+      "self": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft",
+      "self_html": "https://fdat.uni-tuebingen.de/uploads/6bjnr-e3n39",
+      "self_iiif_manifest": "https://fdat.uni-tuebingen.de/api/iiif/draft:6bjnr-e3n39/manifest",
+      "self_iiif_sequence": "https://fdat.uni-tuebingen.de/api/iiif/draft:6bjnr-e3n39/sequence/default",
+      "submit-review": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/draft/actions/submit-review",
+      "versions": "https://fdat.uni-tuebingen.de/api/records/6bjnr-e3n39/versions"
+    },
+    "metadata": {
+      "creators": [
+        {
+          "affiliations": [
+            {
+              "name": "Federal Institute of Hydrology"
+            }
+          ],
+          "person_or_org": {
+            "family_name": "Kleinteich",
+            "given_name": "Julia",
+            "identifiers": [
+              {
+                "identifier": "0000-0002-1879-5994",
+                "scheme": "orcid"
+              }
+            ],
+            "name": "Kleinteich, Julia",
+            "type": "personal"
+          },
+          "role": {
+            "id": "contactperson",
+            "title": {
+              "de": "Kontaktperson",
+              "en": "Contact person"
+            }
+          }
+        },
+        {
+          "affiliations": [
+            {
+              "id": "05a28rw58",
+              "name": "ETH Zurich"
+            }
+          ],
+          "person_or_org": {
+            "family_name": "Hanselmann",
+            "given_name": "Kurt",
+            "name": "Hanselmann, Kurt",
+            "type": "personal"
+          },
+          "role": {
+            "id": "other",
+            "title": {
+              "de": "Andere",
+              "en": "Other"
+            }
+          }
+        },
+        {
+          "affiliations": [
+            {
+              "id": "04td3ys19",
+              "name": "Quadram Institute"
+            }
+          ],
+          "person_or_org": {
+            "family_name": "Hildebrand",
+            "given_name": "Falk",
+            "identifiers": [
+              {
+                "identifier": "0000-0002-0078-8948",
+                "scheme": "orcid"
+              }
+            ],
+            "name": "Hildebrand, Falk",
+            "type": "personal"
+          },
+          "role": {
+            "id": "other",
+            "title": {
+              "de": "Andere",
+              "en": "Other"
+            }
+          }
+        },
+        {
+          "affiliations": [
+            {
+              "id": "03a1kwz48",
+              "name": "University of T\u00fcbingen"
+            }
+          ],
+          "person_or_org": {
+            "family_name": "Kappler",
+            "given_name": "Andreas",
+            "identifiers": [
+              {
+                "identifier": "0000-0002-3558-9500",
+                "scheme": "orcid"
+              }
+            ],
+            "name": "Kappler, Andreas",
+            "type": "personal"
+          },
+          "role": {
+            "id": "other",
+            "title": {
+              "de": "Andere",
+              "en": "Other"
+            }
+          }
+        },
+        {
+          "affiliations": [
+            {
+              "id": "03a1kwz48",
+              "name": "University of T\u00fcbingen"
+            }
+          ],
+          "person_or_org": {
+            "family_name": "Zarfl",
+            "given_name": "Christiane",
+            "identifiers": [
+              {
+                "identifier": "0000-0002-2044-1335",
+                "scheme": "orcid"
+              }
+            ],
+            "name": "Zarfl, Christiane",
+            "type": "personal"
+          },
+          "role": {
+            "id": "supervisor",
+            "title": {
+              "de": "SupervisorIn",
+              "en": "Supervisor"
+            }
+          }
+        }
+      ],
+      "description": "<p>In this study we tested how such communities react to the decrease of glaciers and associated meltwater flows in high-alpine lakes and whether the \"microbial approach\" can serve as an indicator for climate change impacts.We analysed 16 lakes in forefield catchments of three glaciers in the Eastern Swiss Alps on physicochemical and biological parameters. We compared lakes that are fed by glacier meltwater with lakes that got disconnected from glacial meltwater inflow when the glacier receded, as well as \"mixed\" lake types with glacial and non-glacial inflow. Our study suggests that the loss of glaciers will induce a change of sediment bacterial composition and their physiological processes that is unique for glacier-fed lakes in mountain and polar regions.</p>",
+      "funding": [
+        {
+          "award": {
+            "id": "018mejw64::281741268",
+            "identifiers": [
+              {
+                "identifier": "https://gepris.dfg.de/gepris/projekt/281741268",
+                "scheme": "url"
+              }
+            ],
+            "number": "281741268",
+            "title": {
+              "en": "CRC 1253: Catchments as Reactors"
+            }
+          },
+          "funder": {
+            "id": "018mejw64",
+            "name": "German Research Foundation (DFG)"
+          }
+        }
+      ],
+      "identifiers": [
+        {
+          "identifier": "10900.1/2cd2fcc2-9b23-40b6-8c2f-6de56ec109b0",
+          "scheme": "handle"
+        }
+      ],
+      "languages": [
+        {
+          "id": "eng",
+          "title": {
+            "en": "English"
+          }
+        }
+      ],
+      "publication_date": "2022-02-01",
+      "publisher": "University of T\u00fcbingen",
+      "related_identifiers": [
+        {
+          "identifier": "10.1093/femsec/fiac075",
+          "relation_type": {
+            "id": "isdescribedby",
+            "title": {
+              "de": "Wird beschrieben von",
+              "en": "Is described by"
+            }
+          },
+          "resource_type": {
+            "id": "datapaper",
+            "title": {
+              "en": "Data paper"
+            }
+          },
+          "scheme": "doi"
+        }
+      ],
+      "resource_type": {
+        "id": "dataset",
+        "title": {
+          "en": "Dataset"
+        }
+      },
+      "rights": [
+        {
+          "description": {
+            "en": "Permits almost any use subject to providing credit and license notice. Frequently used for media assets and educational materials. The most common license for Open Access scientific publications. Not recommended for software."
+          },
+          "icon": "cc-by-sa-icon",
+          "id": "cc-by-sa-4.0",
+          "props": {
+            "scheme": "spdx",
+            "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+          },
+          "title": {
+            "en": "Creative Commons Attribution Share Alike 4.0 International"
+          }
+        }
+      ],
+      "subjects": [
+        {
+          "id": "101067",
+          "scheme": "HECoS",
+          "subject": "soil science"
+        },
+        {
+          "id": "101083",
+          "scheme": "HECoS",
+          "subject": "geochemistry"
+        },
+        {
+          "id": "100353",
+          "scheme": "HECoS",
+          "subject": "microbiology"
+        }
+      ],
+      "title": "Environmental data for Glacier-melt affects alpine lake microbiology"
+    },
+    "parent": {
+      "access": {
+        "links": [],
+        "owned_by": [
+          {
+            "user": 4
+          }
+        ]
+      },
+      "communities": {},
+      "id": "2zcfn-c8m12",
+      "review": {
+        "id": "abea065c-81b1-4e48-8c49-1667409911e5",
+        "links": {},
+        "receiver": {
+          "community": "7a44d3a9-8fe4-4b54-9420-fc87b93fb2a7"
+        },
+        "status": "created",
+        "title": "",
+        "type": "community-submission"
+      }
+    },
+    "pids": {
+      "doi": {
+        "client": "datacite",
+        "identifier": "10.57754/FDAT.6bjnr-e3n39",
+        "provider": "datacite"
+      }
+    },
+    "revision_id": 106,
+    "status": "draft_with_review",
+    "updated": "2023-03-15T09:08:29.874946+00:00",
+    "versions": {
+      "index": 1,
+      "is_latest": false,
+      "is_latest_draft": true
+    }
+  }

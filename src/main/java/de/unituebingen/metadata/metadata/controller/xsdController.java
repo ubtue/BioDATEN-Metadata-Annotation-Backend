@@ -1,12 +1,20 @@
 package de.unituebingen.metadata.metadata.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +42,14 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,8 +60,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.io.Resources;
+
 import de.unituebingen.metadata.metadata.dao.MetadataDAO;
 import de.unituebingen.metadata.metadata.entities.Metadata;
+import de.unituebingen.metadata.metadata.util.RemoteInvenioRDMServiceCall;
 
 @RequestMapping("xsd")
 @RestController
@@ -59,11 +73,15 @@ public class xsdController {
     @Autowired
     private MetadataDAO metadataDAO;
 
-    // private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
-    private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
-    private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
     private final static String TMPPATH = "/usr/local/tomcat/metadata-annotation/tmp/";
+    private final static String XSLTSOURCE = "/usr/local/tomcat/metadata-annotation/xsd2html2xml/";
+
     // private final static String TMPPATH = "/home/qubvh01/tmp/";
+    // private final static String XSLTSOURCE = "/usr/local/projects/metadata-annotation/xsd2html2xml/";
+
+    private final static String XSDSOURCE = XSLTSOURCE + "biodaten/schemas/";
+    
+    
 
     /**
      * xsd
@@ -150,6 +168,31 @@ public class xsdController {
         metsResult = this.parseMetsString(xmlString);
 
         return metsResult;
+    }
+
+    @PostMapping(value= "/send-fdat",
+                consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String sendDataToFdat(@RequestBody Map<String, String> customQuery) {
+
+        String fdatResult = "";
+        String metsResult = "";
+
+        metsResult = this.parseMetsString(customQuery.get("xml"));
+
+        try {
+            fdatResult = convertMetsToFdatJson(metsResult);
+
+            RemoteInvenioRDMServiceCall.postDataciteRecordToRemoteInvenioService(fdatResult, customQuery.get("fdatKey"));
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return fdatResult;
     }
 
     @PostMapping(value = "/xml-input")
@@ -879,5 +922,43 @@ public class xsdController {
         }
 
         return file;
+    }
+
+    private String convertMetsToFdatJson(String metsString) throws IOException, InterruptedException {
+
+        // Save the metString to a file in an temporary folder with a random name 
+        // We need the xml to be in a valid file for the converting python script to work
+        File newFileMetsXML = new File(TMPPATH + "newFile_" + LocalDateTime.now().toString() + Math.random());
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(newFileMetsXML));
+        writer.write(metsString);
+    
+        writer.close();
+
+        File newJSONFile = new File(TMPPATH + "newFile_" + LocalDateTime.now().toString() + Math.random());
+
+        // Call the python script (Arg 1: Path to xml file, Arg 2: Path to temp JSON file which we read)
+        Process p = new ProcessBuilder("python2.7", Resources.getResource("static/assets/python/convert_fdat.py").getPath(), newFileMetsXML.getAbsolutePath(), newJSONFile.getAbsolutePath())
+            .redirectErrorStream(true)
+            .start();
+        p.getInputStream().transferTo(System.out);
+        int rc = p.waitFor();
+
+        Path filePath = newJSONFile.toPath();
+
+        //Path filePath = Paths.get(Resources.getResource("static/assets/python/example_metadata.json").getPath());
+
+        String result = Files.readString(filePath);
+
+        // Delete the files
+        if ( newFileMetsXML.exists() ) {
+            newFileMetsXML.delete();
+        }
+        
+        if ( newJSONFile.exists() ) {
+            newJSONFile.delete();
+        }
+
+        return result;
     }
 }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:datacite="https://schema.datacite.org/meta/kernel-4.4/"
+           xmlns:premis="https://www.loc.gov/standards/premis/"
+           xmlns:cmdp="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1659015263825"
+           TYPE="dataset"
+           ID="d1"
+           OBJID="[place_doi_here]"
+           LABEL="This is my title 2 asdsada 423423">
+   <mets:metsHdr CREATEDATE="2023-04-11T08:17:21.33+02:00">
+      <mets:agent ROLE="CREATOR" TYPE="ORGANIZATION">
+         <mets:name>Bioinformatics DATa ENvironment</mets:name>
+      </mets:agent>
+   </mets:metsHdr>
+   <mets:dmdSec ID="dmdDatacite" CREATED="2023-04-11T08:17:21.33+02:00">
+      <mets:mdWrap MDTYPE="OTHER"
+                   MDTYPEVERSION="4.4"
+                   OTHERMDTYPE="datacite BiodatenMinimal premis"
+                   CREATED="2023-04-11T08:17:21.33+02:00">
+         <mets:xmlData>
+            <identifier xmlns="http://datacite.org/schema/kernel-4" identifierType="a">546</identifier>
+            <creators xmlns="http://datacite.org/schema/kernel-4">
+               <creator>
+                  <creatorName>prefilled value test</creatorName>
+               </creator>
+            </creators>
+            <titles xmlns="http://datacite.org/schema/kernel-4">
+               <title>This is my title 2</title>
+               <title titleType="AlternativeTitle">asdsada</title>
+               <title titleType="Subtitle">423423</title>
+            </titles>
+            <publisher xmlns="http://datacite.org/schema/kernel-4">a</publisher>
+            <publicationYear xmlns="http://datacite.org/schema/kernel-4">a</publicationYear>
+            <resourceType xmlns="http://datacite.org/schema/kernel-4"
+                          resourceTypeGeneral="Audiovisual">a</resourceType>
+         </mets:xmlData>
+      </mets:mdWrap>
+   </mets:dmdSec>
+   <mets:dmdSec ID="dmdBioDATEN" CREATED="2023-04-11T08:17:21.33+02:00">
+      <mets:mdWrap MDTYPE="OTHER"
+                   MDTYPEVERSION="1.0"
+                   OTHERMDTYPE="BiodatenMinimal"
+                   CREATED="2023-04-11T08:17:21.33+02:00">
+         <mets:xmlData>
+            <cmdp:BiodatenMinimal>
+               <cmdp:StudiedObject>
+                  <cmdp:studiedObjectIdentifier>1</cmdp:studiedObjectIdentifier>
+                  <cmdp:descriptionStudiedObject>a</cmdp:descriptionStudiedObject>
+                  <cmdp:typeStudiedObject>Organism (i.e., eukaryota, bacteria, archaea)</cmdp:typeStudiedObject>
+                  <cmdp:cellType>hskeletal muscle satellite cell</cmdp:cellType>
+                  <cmdp:nameMaterial>a</cmdp:nameMaterial>
+                  <cmdp:measurementTarget>a</cmdp:measurementTarget>
+               </cmdp:StudiedObject>
+               <cmdp:Method>
+                  <cmdp:methodIdentifier>1</cmdp:methodIdentifier>
+                  <cmdp:methodDescription>a</cmdp:methodDescription>
+                  <cmdp:samplePreparationOrProcessing>a</cmdp:samplePreparationOrProcessing>
+                  <cmdp:typeOfMethod>Sequencing method</cmdp:typeOfMethod>
+                  <cmdp:sequencingMethod>Maxam–Gilbert sequencing</cmdp:sequencingMethod>
+                  <cmdp:sequencingMethodOther/>
+                  <cmdp:analyticalMethod>High performance liquid chromatography (HPLC)</cmdp:analyticalMethod>
+                  <cmdp:analyticalMethodOther/>
+                  <cmdp:particleAnalysisMethod>Asymmetric flow field flow fractionation</cmdp:particleAnalysisMethod>
+                  <cmdp:particleAnalysisMethodOther/>
+                  <cmdp:protein-DNA-RNA-Interaction>Yeast two-hybrid systemmetagenomics</cmdp:protein-DNA-RNA-Interaction>
+                  <cmdp:protein-DNA-RNA-InteractionOther/>
+                  <cmdp:protein-protein-interaction>Yeast two-hybrid system</cmdp:protein-protein-interaction>
+                  <cmdp:protein-protein-interactionOther/>
+                  <cmdp:protein-lipid-interaction>Thermal shift assay</cmdp:protein-lipid-interaction>
+                  <cmdp:protein-lipid-interactionOther/>
+                  <cmdp:bioinformaticMethod>Basic local alignment search tool (BLAST)</cmdp:bioinformaticMethod>
+                  <cmdp:bioinformaticMethodOther/>
+                  <cmdp:otherMethod/>
+               </cmdp:Method>
+               <cmdp:Run>
+                  <cmdp:runIdentifier>1</cmdp:runIdentifier>
+                  <cmdp:runMethodIdentifier>1</cmdp:runMethodIdentifier>
+                  <cmdp:runStudiedObjectIdentifier>1</cmdp:runStudiedObjectIdentifier>
+               </cmdp:Run>
+               <cmdp:File>
+                  <cmdp:fileIdentifier>1</cmdp:fileIdentifier>
+                  <cmdp:fileSourceRun>1</cmdp:fileSourceRun>
+                  <cmdp:fileSourceFile>1</cmdp:fileSourceFile>
+               </cmdp:File>
+            </cmdp:BiodatenMinimal>
+         </mets:xmlData>
+      </mets:mdWrap>
+   </mets:dmdSec>
+   <mets:amdSec>
+      <mets:rightsMD ID="rightsmd" CREATED="2023-04-11T08:17:21.33+02:00">
+         <mets:mdWrap MDTYPE="OTHER"
+                      MDTYPEVERSION="4.4"
+                      OTHERMDTYPE="datacite BiodatenMinimal premis"
+                      CREATED="2023-04-11T08:17:21.33+02:00">
+            <mets:xmlData/>
+         </mets:mdWrap>
+      </mets:rightsMD>
+   </mets:amdSec>
+   <mets:structMap ID="structmap">
+      <mets:div ID="dataset" DMDID="dmdDatacite dmdBioDATEN" ADMID="rightsmd"/>
+   </mets:structMap>
+</mets:mets>

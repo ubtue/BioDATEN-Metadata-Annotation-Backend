@@ -47,3 +47,11 @@ CREATE TABLE render_options
     hide BOOLEAN,
     active BOOLEAN
 );
+
+
+CREATE TABLE user_information
+(
+    id UUID primary key,
+    user_id VARCHAR(3000) NOT NULL,
+    fdat_key VARCHAR(3000)
+);
