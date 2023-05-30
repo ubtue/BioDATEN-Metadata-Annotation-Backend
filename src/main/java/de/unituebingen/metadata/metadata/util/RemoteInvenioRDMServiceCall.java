@@ -36,6 +36,16 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class RemoteInvenioRDMServiceCall {
 
+    // FDAT SDC BIODATEN PARAMS
+    private final static String FDAT_ADDRESS = "https://fdat.uni-tuebingen.de/api/records";
+    private final static String COMMUNITY_ID = "8558119a-7014-4466-85fe-56f34800d2ca";
+
+    // INVENIO TEST UB TUE JK PARAMS
+    // private final static String FDAT_ADDRESS = "https://inveniordm.web.cern.ch/api/records";
+    // private final static String COMMUNITY_ID = "2cde3517-1c1b-42f3-a352-188f11a2d0c7";
+
+    // Debug outpus
+    private final static boolean ENABLE_DEBUG_MESSAGES = false;
 
     private static CloseableHttpClient getHTTPClient() {
 
@@ -56,21 +66,24 @@ public class RemoteInvenioRDMServiceCall {
 
     // #################################################################################################
 
-    public static String postDataciteRecordToRemoteInvenioService(String datacitejsonString, String apiKey) {
+    public static String postDataciteRecordToRemoteInvenioService(String datacitejsonString, String apiKey, File metsFile) {
 
         try {
 
-            System.out.println("Trying to start Request");
+            // Debug messages
+            if ( ENABLE_DEBUG_MESSAGES ) {
+                System.out.println("Trying to start Request");
 
-            System.out.println("apiKey");
-            System.out.println(apiKey);
+                System.out.println("apiKey");
+                System.out.println(apiKey);
 
-            System.out.println("datacitejsonString");
-            System.out.println(datacitejsonString);
-
+                System.out.println("datacitejsonString");
+                System.out.println(datacitejsonString);
+            }
+            
             CloseableHttpClient client = getHTTPClient();
 
-            HttpPost httpPost = new HttpPost("https://inveniordm.web.cern.ch/api/records");
+            HttpPost httpPost = new HttpPost(FDAT_ADDRESS);
 
             httpPost.setEntity(new StringEntity(datacitejsonString, ContentType.APPLICATION_JSON));
 
@@ -89,18 +102,27 @@ public class RemoteInvenioRDMServiceCall {
 
             // CloseableHttpResponse response = client.execute(httpGet);
 
-            // System.out.println("response");
-            // System.out.println(response);
+            // Debug messages
+            if ( ENABLE_DEBUG_MESSAGES ) {
+                System.out.println("response");
+                System.out.println(response);
+            }
 
             InputStream responseInvenio = response.getEntity().getContent(); // wrappedEntity as application/json // contains PID
 
-            System.out.println("responseInvenio");
-            System.out.println(responseInvenio);
+            // Debug messages
+            if ( ENABLE_DEBUG_MESSAGES ) {
+                System.out.println("responseInvenio");
+                System.out.println(responseInvenio);
+            }
 
             JSONObject jsonResponseInvenio = new JSONObject(IOUtils.toString(responseInvenio, "UTF-8"));
 
-            System.out.println("jsonResponseInvenio");
-            System.out.println(jsonResponseInvenio);
+            // Debug messages
+            if ( ENABLE_DEBUG_MESSAGES ) {
+                System.out.println("jsonResponseInvenio");
+                System.out.println(jsonResponseInvenio);
+            }
 
             // #####################################################################
 
@@ -122,8 +144,21 @@ public class RemoteInvenioRDMServiceCall {
             // Assign resource to a community and receive a Link (id) to submit resource for review
             String submitReviewLink = assignCommunity(reviewLink, apiKey);
 
-            System.out.println("submitReviewLink");
-            System.out.println(submitReviewLink);
+            // Debug messages
+            if ( ENABLE_DEBUG_MESSAGES ) {
+                System.out.println("submitReviewLink");
+                System.out.println(submitReviewLink);
+            }
+
+            // Start draft file upload
+            draftDataFileUpload(metsFile, pid, apiKey, draftFiles);
+
+            // Upload a draft file's content
+            uploadDataFile(metsFile, pid, apiKey, draftFiles);
+
+            // Complete a draft file upload
+            commitDataFileUpload(metsFile, pid, apiKey, draftFiles);
+            
 
             // Request a review from a community / send record to a community
             // requestCommunityReview(submitReviewLink, apiKey);
@@ -228,7 +263,7 @@ public class RemoteInvenioRDMServiceCall {
                 review.put("type", "community-submission");
             
                 JSONObject receiver = new JSONObject();
-                receiver.put("community", "2cde3517-1c1b-42f3-a352-188f11a2d0c7");
+                receiver.put("community", COMMUNITY_ID);
 
                 review.put("receiver", receiver);
 
@@ -236,8 +271,11 @@ public class RemoteInvenioRDMServiceCall {
     
                 CloseableHttpClient client = getHTTPClient();
 
-                System.out.println("reviewLink");
-                System.out.println(reviewLink);
+                // Debug messages
+                if ( ENABLE_DEBUG_MESSAGES ) {
+                    System.out.println("reviewLink");
+                    System.out.println(reviewLink);
+                }
     
                 HttpPut httpPut = new HttpPut(reviewLink);
     
@@ -248,13 +286,19 @@ public class RemoteInvenioRDMServiceCall {
                 CloseableHttpResponse response = client.execute(httpPut);
                 InputStream responseInvenio = response.getEntity().getContent(); // wrappedEntity as application/json // contains ID
 
-                System.out.println("responseInvenioCommunity");
-                System.out.println(responseInvenio);
+                // Debug messages
+                if ( ENABLE_DEBUG_MESSAGES ) {
+                    System.out.println("responseInvenioCommunity");
+                    System.out.println(responseInvenio);
+                }
 
                 JSONObject jsonResponseInvenio = new JSONObject(IOUtils.toString(responseInvenio, "UTF-8"));
 
-                System.out.println("jsonResponseInvenioCommunity");
-                System.out.println(jsonResponseInvenio);
+                // Debug messages
+                if ( ENABLE_DEBUG_MESSAGES ) {
+                    System.out.println("jsonResponseInvenioCommunity");
+                    System.out.println(jsonResponseInvenio);
+                }
 
                 JSONObject linkList = (JSONObject) jsonResponseInvenio.get("links");
                 JSONObject submit = (JSONObject) linkList.get("actions");

@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -62,6 +64,7 @@ import org.xml.sax.SAXException;
 
 import com.google.common.io.Resources;
 
+import ch.qos.logback.core.util.FileUtil;
 import de.unituebingen.metadata.metadata.dao.MetadataDAO;
 import de.unituebingen.metadata.metadata.entities.Metadata;
 import de.unituebingen.metadata.metadata.util.RemoteInvenioRDMServiceCall;
@@ -177,12 +180,23 @@ public class xsdController {
         String fdatResult = "";
         String metsResult = "";
 
-        metsResult = this.parseMetsString(customQuery.get("xml"));
+        metsResult = this.parseMetsString(customQuery.get("xml"));     
 
-        try {
+        String random = LocalDateTime.now().toString() + Math.random();
+
+        Path metsPath = Path.of(TMPPATH + "/" + random);
+
+        try {          
+
+            File newMetsFileXML = new File(TMPPATH + "/" + random + "/mets.xml");
+
+            FileUtils.writeStringToFile(newMetsFileXML, metsResult, Charset.forName("UTF-8"));
+
             fdatResult = convertMetsToFdatJson(metsResult);
 
-            RemoteInvenioRDMServiceCall.postDataciteRecordToRemoteInvenioService(fdatResult, customQuery.get("fdatKey"));
+            RemoteInvenioRDMServiceCall.postDataciteRecordToRemoteInvenioService(fdatResult, customQuery.get("fdatKey"), newMetsFileXML);
+            
+            FileUtils.deleteDirectory(metsPath.toFile());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -946,9 +960,17 @@ public class xsdController {
 
         Path filePath = newJSONFile.toPath();
 
-        //Path filePath = Paths.get(Resources.getResource("static/assets/python/example_metadata.json").getPath());
+        // Path filePath = Paths.get(Resources.getResource("static/assets/python/example_max.json").getPath());
 
+        // Get the file content as the result
         String result = Files.readString(filePath);
+
+        // Replace a few custom placeholders
+        result = result.replaceAll("~amp;", "&")
+                        .replaceAll("~lt;", "<")
+                        .replaceAll("~gt;", ">")
+                        .replaceAll("~quot;", "\\\\\"")
+                        .replaceAll("~#039;", "'");
 
         // Delete the files
         if ( newFileMetsXML.exists() ) {

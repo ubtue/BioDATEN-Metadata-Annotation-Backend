@@ -32,7 +32,7 @@ public class MetadataApplication extends SpringBootServletInitializer {
 		@Override
 		public void addCorsMappings(CorsRegistry corsRegistry) {
 			corsRegistry.addMapping("/**")
-					.allowedOrigins("http://localhost:4200", "http://localhost", "https://localhost", "http://193.196.29.32/", "https://193.196.29.32/")
+					.allowedOrigins("http://localhost:4200", "http://localhost", "https://localhost", "http://193.196.29.32/", "https://193.196.29.32/", "http://annotate.biodaten.info/", "https://annotate.biodaten.info/", "http://biodaten.info", "https://biodaten.info")
 					.allowedMethods("*")
 					.maxAge(3600L)
 					.allowedHeaders("*")

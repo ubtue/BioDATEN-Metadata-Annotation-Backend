@@ -109,9 +109,12 @@ for child in root.iter():
 			#search for 'affiliation' element	
 			if schild.tag == "{" + ns['dc'] + "}" + "affiliation":
 				#store the value of the 'affiliation' element in the json object in the according layer
-				affiliation['id'] = schild.text
+				#Change JK: Remove ID for now
+				#affiliation['id'] = schild.text
 				#store the value of the 'affiliationIdentifier' attribute in the json object in the according layer
-				affiliation['name'] = schild.get('affiliationIdentifier')
+				#Change JK: Change name to text from affiliationIdentifier
+				#affiliation['name'] = schild.get('affiliationIdentifier')
+				affiliation['name'] = schild.text
 				#append a copy of the layer object to the super-layer object
 				affiliations.append(affiliation.copy())
 		#add the layer object to its super-layer		
@@ -298,9 +301,12 @@ for child in root.iter():
 			#search for 'affiliation' element
 			if schild.tag == "{" + ns['dc'] + "}" + "affiliation":
 				#store the value of the 'affiliation' element in the json object in the according layer
-				affiliation['id'] = schild.text
+				#Change JK: Remove ID for now
+				#affiliation['id'] = schild.text
 				#store the value of the 'affiliationIdentifier' attribute in the json object in the according layer
-				affiliation['name'] = schild.get('affiliationIdentifier')
+				#Change JK: Change name to text from affiliationIdentifier
+				#affiliation['name'] = schild.get('affiliationIdentifier')
+				affiliation['name'] = schild.text
 				#append a copy of the layer object to the super-layer object
 				affiliations.append(affiliation.copy())
 				#add the layer object to its super-layer
@@ -360,7 +366,7 @@ for child in root.iter():
 		#store the value of the 'language' element in the json object in the according layer
 		date['date'] = child.text
 		#store the value of the 'dateInformation' attribute in the json object in the according layer
-		date_type['id'] = child.get('dateInformation')
+		date_type['id'] = child.get('dateType').lower()
 		#store the value of the 'dateType' attribute in the json object in the according layer
 		date_type_title['en'] = child.get('dateType')
 		#add the layer object to its super-layer
@@ -434,7 +440,7 @@ for child in root.iter():
 		#intialize objects to temporarily store information to create nested structure
 		funding_funder = {}
 		#define value to ensure correct order inside the layer object
-		funding_funder['id'] = ""
+		#funding_funder['id'] = ""
 		#define value to ensure correct order inside the layer object
 		#define value to ensure correct order inside the layer object
 		funding_funder['name'] = ""

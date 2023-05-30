@@ -1,0 +1,233 @@
+{
+    "access": {
+      "files": "public", 
+      "record": "public"
+    }, 
+    "files": {
+      "enabled": true
+    }, 
+    "metadata": {
+      "publisher": "BioDATEN", 
+      "dates": [
+        {
+          "date": "2012-05-25", 
+          "type": {
+            "id": "accepted", 
+            "title": {
+              "en": "Accepted"
+            }
+          }, 
+          "description": "Research articel accepted"
+        }
+      ], 
+      "identifiers": [], 
+      "funding": [
+        {
+          "funder": {
+            "name": "Ministry of Culture of Saxony-Anhalt"
+          }, 
+          "award": {
+            "identifiers": [
+              {
+                "scheme": "url", 
+                "identifier": null
+              }
+            ], 
+            "number": "XP3624HP/0606T", 
+            "title": ""
+          }
+        }, 
+        {
+          "funder": {
+            "name": "Federal Ministry of Education and Research (Germany)"
+          }, 
+          "award": {
+            "identifiers": [
+              {
+                "scheme": "url", 
+                "identifier": null
+              }
+            ], 
+            "number": "0313155", 
+            "title": {
+              "en": "ARABIDO-SEED"
+            }
+          }
+        }
+      ], 
+      "description": "This is supplement to a journal article entitled “Toward the identification and regulation of the Arabidopsis thaliana ABI3 regulon”. The package contains data and information on exploring the ABI3 regulon in Arabidopsis thaliana. This comprises information on the gene promoters used in the Chip-chip methods and experimental data on protein-DNA/RNA interaction.", 
+      "contributors": [], 
+      "title": "Demo case 1: \"Data from: Toward the identification and regulation of the Arabidopsis thaliana ABI3 regulon\"", 
+      "rights": [
+        {
+          "title": {
+            "en": "CC-BY-4.0"
+          }
+        }
+      ], 
+      "additional_descriptions": [
+        {
+          "type": {
+            "id": "methods", 
+            "title": {
+              "en": "Method"
+            }
+          }, 
+          "description": "Protein-DNA/RNA interaction: Yeast two-hybrid systemmetagenomics"
+        }, 
+        {
+          "type": {
+            "id": "methods", 
+            "title": {
+              "en": "Method"
+            }
+          }, 
+          "description": "Protein-DNA/RNA interaction: Maxam–Gilbert sequencing"
+        }, 
+        {
+          "type": {
+            "id": "methods", 
+            "title": {
+              "en": "Method"
+            }
+          }, 
+          "description": "Sequencing method: doi:10.1093/nar/gks594"
+        }
+      ], 
+      "languages": [
+        {
+          "id": "eng"
+        }
+      ], 
+      "additional_titles": [], 
+      "subjects": [
+        {
+          "subject": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C21050"
+        }, 
+        {
+          "subject": "http://purl.obolibrary.org/obo/NCBITaxon_3702"
+        }, 
+        {
+          "subject": "ABI3 regulon"
+        }
+      ], 
+      "publication_date": "", 
+      "creators": [
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Mönke", 
+            "type": "personal", 
+            "name": "Mönke, Gudrun", 
+            "given_name": "Gudrun"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Seifert", 
+            "type": "personal", 
+            "name": "Seifert, Michael", 
+            "given_name": "Michael"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Keilwagen", 
+            "type": "personal", 
+            "name": "Keilwagen, Jens", 
+            "given_name": "Jens"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Mohr", 
+            "type": "personal", 
+            "name": "Mohr, Michaela", 
+            "given_name": "Michaela"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Grosse", 
+            "type": "personal", 
+            "name": "Grosse, Ivo", 
+            "given_name": "Ivo"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Hähnel", 
+            "type": "personal", 
+            "name": "Hähnel, Urs", 
+            "given_name": "Urs"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Junker", 
+            "type": "personal", 
+            "name": "Junker, Astrid", 
+            "given_name": "Astrid"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Weisshaar", 
+            "type": "personal", 
+            "name": "Weisshaar, Bernd", 
+            "given_name": "Bernd"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Conrad", 
+            "type": "personal", 
+            "name": "Conrad, Udo", 
+            "given_name": "Udo"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Bäumlein", 
+            "type": "personal", 
+            "name": "Bäumlein, Helmut", 
+            "given_name": "Helmut"
+          }
+        }, 
+        {
+          "affiliations": [], 
+          "person_or_org": {
+            "family_name": "Altschmied", 
+            "type": "personal", 
+            "name": "Altschmied, Lothar", 
+            "given_name": "Lothar"
+          }
+        }
+      ], 
+      "resource_type": {
+        "id": "dataset"
+      }, 
+      "related_identifiers": [
+        {
+          "relationType": {
+            "id": "issupplementto", 
+            "title": {
+              "en": "IsSupplementTo"
+            }
+          }, 
+          "scheme": "DOI", 
+          "identifier": "10.1093/nar/gks594"
+        }
+      ]
+    }
+  }
+  
