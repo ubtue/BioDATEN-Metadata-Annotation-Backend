@@ -938,6 +938,16 @@ public class xsdController {
         return file;
     }
 
+
+    /**
+     * convertMetsToFdatJson
+     * 
+     * Converts a METS XML String to a Json String that can be used by FDAT/Invenio
+     * The python script convert_fdat.py is used for this
+     * 
+     * @param metsString
+     * @return
+     */
     private String convertMetsToFdatJson(String metsString) throws IOException, InterruptedException {
 
         // Save the metString to a file in an temporary folder with a random name 

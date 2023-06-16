@@ -99,7 +99,7 @@ for child in root.iter():
 			#search for 'nameIdentifier' element
 			if schild.tag == "{" + ns['dc'] + "}" + "nameIdentifier":
 				#store the value of the 'nameIdentifierScheme' attribute in the json object in the according layer
-				person_or_org_identifier['scheme'] = schild.get('nameIdentifierScheme')
+				person_or_org_identifier['scheme'] = schild.get('nameIdentifierScheme').lower()
 				#store the value of the 'nameIdentifier' element in the json object in the according layer
 				person_or_org_identifier['identifier'] = schild.text
 				#append a copy of the layer object to the super-layer object
@@ -144,7 +144,12 @@ for child in root.iter():
 		#store the value of the 'title' element in the json object in the according layer
 		additional_title['title'] = child.text
 		#store the value of the 'titleType' attribute in the json object in the according layer
-		additional_title_type['id'] = child.get('titleType')
+		additional_title_type['id'] = child.get('titleType').lower()
+		#Change JK: Special case "alternative title" and "translated title"
+		if additional_title_type['id'] == "translatedtitle":
+			additional_title_type['id'] = "translated-title"
+		if additional_title_type['id'] == "alternativetitle":
+			additional_title_type['id'] = "alternative-title"
         #store the value of the 'title' element in the json object in the according layer
 		additional_title_type_title['en'] = child.text
         #add the layer object to its super-layer
@@ -174,7 +179,7 @@ for child in root.iter():
 		if child.tag == "{" + ns['dc'] + "}" + "description" and child.get('descriptionType') != 'Abstract':
 			#store the value of the 'description' element in the json object in the according layer
 			additional_description['description'] = child.text
-			#store the value of the 'descriptionType' attribute in the json object in the according layer
+			#store the value of the 'descriptionType' attribute in the json object in the according layer			
 			additional_description_type['id'] = child.get('descriptionType').lower()
 			#store the value of the 'descriptionType' attribute in the json object in the according layer
 			additional_description_type_title['en'] = child.get('descriptionType')
@@ -289,7 +294,7 @@ for child in root.iter():
 			#search for 'nameIdentifier' element
 			if schild.tag == "{" + ns['dc'] + "}" + "nameIdentifier":
 				#store the value of the 'nameIdentifierScheme' attribute in the json object in the according layer
-				person_or_org_identifier['scheme'] = schild.get('nameIdentifierScheme')
+				person_or_org_identifier['scheme'] = schild.get('nameIdentifierScheme').lower()
 				#store the value of the 'nameIdentifier' element in the json object in the according layer
 				person_or_org_identifier['identifier'] = schild.text
 				#append a copy of the layer object to the super-layer object

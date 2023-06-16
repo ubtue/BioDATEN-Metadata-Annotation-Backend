@@ -45,7 +45,7 @@ public class RemoteInvenioRDMServiceCall {
     // private final static String COMMUNITY_ID = "2cde3517-1c1b-42f3-a352-188f11a2d0c7";
 
     // Debug outpus
-    private final static boolean ENABLE_DEBUG_MESSAGES = false;
+    private final static boolean ENABLE_DEBUG_MESSAGES = true;
 
     private static CloseableHttpClient getHTTPClient() {
 
